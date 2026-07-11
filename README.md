@@ -10,12 +10,12 @@ Designed to run unattended on a schedule via `cron`.
 
 ## Features
 
-- ✅ Collects CPU (from load average), memory %, and disk % usage
-- ✅ Configurable thresholds via environment variables
-- ✅ Timestamped, leveled logging (`INFO` / `WARN` / `ERROR`) to a logfile and screen
-- ✅ Optional Slack alerting via webhook
-- ✅ Automatic cleanup of logs older than N days
-- ✅ Defensive scripting: `set -euo pipefail`, `trap` cleanup, input-safe quoting
+- Collects CPU (from load average), memory %, and disk % usage
+- Configurable thresholds via environment variables
+- Timestamped, leveled logging (`INFO` / `WARN` / `ERROR`) to a logfile and screen
+- Optional Slack alerting via webhook
+- Automatic cleanup of logs older than N days
+- Defensive scripting: `set -euo pipefail`, `trap` cleanup, input-safe quoting
 
 ## Requirements
 
