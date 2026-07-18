@@ -11,7 +11,9 @@ Designed to run unattended on a schedule via `cron`.
 ## Features
 
 - Collects CPU (from load average), memory %, and disk % usage
+- Cross-platform metric collection — works on both **Linux** and **macOS**
 - Configurable thresholds via environment variables
+- **One log file per day** (`health-YYYY-MM-DD.log`); the log directory is created automatically
 - Timestamped, leveled logging (`INFO` / `WARN` / `ERROR`) to a logfile and screen
 - Optional Slack alerting via webhook
 - Automatic cleanup of logs older than N days
@@ -20,7 +22,9 @@ Designed to run unattended on a schedule via `cron`.
 ## Requirements
 
 - Bash 4+
-- Standard coreutils (`df`, `free`, `awk`, `tr`, `find`, `nproc`)
+- Standard coreutils (`df`, `awk`, `tr`, `find`)
+- **Linux:** `free`, `nproc`, `/proc/loadavg`
+- **macOS:** `vm_stat`, `sysctl` (used automatically when running on Darwin)
 - Optional: `curl` (only if using Slack alerts)
 
 ## Usage
@@ -29,7 +33,7 @@ Designed to run unattended on a schedule via `cron`.
 # make it executable (once)
 chmod +x health-monitor.sh
 
-# run with defaults (thresholds = 80%, log to ~/health.log)
+# run with defaults (thresholds = 80%, log to ~/logs/health-YYYY-MM-DD.log)
 ./health-monitor.sh
 
 # override any setting via environment variables
@@ -40,7 +44,7 @@ LOGFILE=/var/log/health.log DISK_MAX=90 MEM_MAX=85 ./health-monitor.sh
 
 | Variable | Default | Description |
 |---|---|---|
-| `LOGFILE` | `$HOME/health.log` | Where results are logged |
+| `LOGFILE` | `$HOME/logs/health-$(date +%F).log` | Where results are logged; a new file is created each day |
 | `CPU_MAX` | `80` | CPU % threshold |
 | `MEM_MAX` | `80` | Memory % threshold |
 | `DISK_MAX` | `80` | Disk % threshold |
@@ -72,9 +76,14 @@ Verify with `crontab -l`.
 ## How it works
 
 1. **Config** block at the top — everything tunable, overridable via env vars.
-2. `collect()` reads each metric and parses a clean number.
+   `LOGFILE` embeds today's date, so each day gets its own file and the log
+   directory is created automatically on first run.
+2. `collect()` reads each metric and parses a clean number. It detects the OS
+   (`uname -s`) and uses `free`/`/proc/loadavg`/`nproc` on Linux or
+   `vm_stat`/`sysctl` on macOS.
 3. One reusable `check()` compares a value against its limit and logs/alerts.
-4. `prune_logs()` deletes logfiles older than `RETAIN_DAYS`.
+4. `prune_logs()` deletes logfiles older than `RETAIN_DAYS`. Because each day
+   writes to a new dated file, older files age out and get removed cleanly.
 5. `main()` orchestrates the run; a `trap` logs any abnormal exit.
 
 ## Possible extensions

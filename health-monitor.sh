@@ -7,7 +7,8 @@
 set -euo pipefail
 
 # ---------------- CONFIG (tune these) ----------------
-LOGFILE="${LOGFILE:-$HOME/health.log}"
+# a NEW file each day, e.g. health-2026-07-18.log
+LOGFILE="${LOGFILE:-$HOME/logs/health-$(date +%F).log}"
 CPU_MAX="${CPU_MAX:-80}"
 MEM_MAX="${MEM_MAX:-80}"
 DISK_MAX="${DISK_MAX:-80}"
@@ -18,6 +19,9 @@ SLACK_WEBHOOK_URL="${SLACK_WEBHOOK_URL:-}"   # optional; empty = skip webhook
 trap 'rc=$?; [ $rc -ne 0 ] && log ERROR "monitor exited with code $rc"; exit $rc' EXIT
 
 # ---------------- LOGGING ----------------
+# make sure the log directory exists before we write to it
+mkdir -p "$(dirname "$LOGFILE")"
+
 log() {
     local level="$1"; shift
     echo "$(date '+%F %T') [$level] $*" | tee -a "$LOGFILE"
