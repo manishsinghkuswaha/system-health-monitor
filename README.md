@@ -8,7 +8,7 @@ Designed to run unattended on a schedule via `cron`.
 > Built as the capstone for a Linux & Shell Scripting course — it exercises
 > Linux fundamentals, text processing, scripting, and defensive/production techniques.
 
-## Features it has
+## Features
 
 - Collects CPU (from load average), memory %, and disk % usage
 - Cross-platform metric collection — works on both **Linux** and **macOS**
