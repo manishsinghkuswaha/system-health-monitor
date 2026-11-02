@@ -51,8 +51,7 @@ check() {                       # $1=name  $2=value  $3=limit
 
 # ---------------- COLLECT METRICS ----------------
 collect() {
-    DISK=$(df -h / | awk 'NR==2 {print $5}' | tr -d '%')
-
+    DISK=$(df -P / | awk 'NR==2 {print $5}' | tr -d '%')
     local load cores
     if [ "$(uname -s)" = "Darwin" ]; then
         # macOS
