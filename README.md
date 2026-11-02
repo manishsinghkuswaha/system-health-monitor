@@ -96,3 +96,6 @@ Verify with `crontab -l`.
 ## License
 
 MIT
+
+## Scheduling Reminder
+Run the monitor manually before scheduling it with cron.
